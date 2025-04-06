@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matching Game</title>
+    <style>
+        body {
+            font-family: Verdana, sans-serif;
+            background-color: #b8d8ad;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 0.3em;
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: #555;
+            margin-bottom: 2em;
+        }
+
+        #leftSide, #rightSide {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background-color: #c2e5ea;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        #leftSide {
+            margin-left:15%;
+        }
+
+        #rightSide {
+            margin-left:55%;
+        }
+
+        img {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            transition: transform 0.2s ease;
+            cursor: pointer;
+        }
+
+        img:hover {
+            transform: scale(1.2);
+        }
+
+        #rightSide > div {
+            display: contents;
+        }
+    </style>
+
+
+
+
+
+</head>
+<body>
+    <h1>Matching Game</h1>
+    <p>Click on the extra smiling face on the left.</p>
+    <div id="leftSide"></div>
+    <div id="rightSide"></div>
+
+    <script>
+        window.addEventListener('load', generateFaces); //more consistent than adding onload in <body>.
+        let numberOfFaces = 5;
+        const theLeftSide = document.querySelector('#leftSide');
+        const theRightSide = document.querySelector('#rightSide');
+        let level = 1;
+
+        function generateFaces() {
+            for (let i = 0; i < numberOfFaces; i++) { //iterates on numberoffaces
+                const face = document.createElement('img'); //assign img element to face
+                face.src = 'images/smile.png'; // give source of the img element
+                let randomTop = Math.floor(Math.random()*400 + 1); //random placement to use for top
+                let randomLeft = Math.floor(Math.random()*400 + 1); // random placement to use for left
+                face.style.top = randomTop + 'px'; //placement top
+                face.style.left = randomLeft + 'px'; //placement left
+                theLeftSide.appendChild(face); // adding imgs to #leftSide div as child nodes
+            }
+            theLeftSide.lastChild.addEventListener('click', nextLevel); //create click event on the last child node of the leftside div that calls nextLevel function
+            document.body.addEventListener('click', gameOver);
+
+            const leftSideImages = theLeftSide.cloneNode(true); // clone the div & img nodes of #leftSide div
+            leftSideImages.removeChild(leftSideImages.lastChild); // remove the last img node (to make the difference)
+            theRightSide.appendChild(leftSideImages); // Add the cloned-lastchild imgs to the #rightSide div
+        }
+
+        function nextLevel(event) {
+            event.stopPropagation();
+            level += 1;
+            //add while loops to clear the childs before calling generatefaces again
+            while(theRightSide.firstChild){
+                theRightSide.removeChild(theRightSide.firstChild);
+            };
+            while(theLeftSide.firstChild){
+                theLeftSide.removeChild(theLeftSide.firstChild);
+            };
+            numberOfFaces += 5;
+            generateFaces();
+        }
+
+        function gameOver(){
+            alert(`Game over! You reached level ${level}! Try again by pressing F5 or ctrl R`);
+            theLeftSide.lastChild.removeEventListener('click', nextLevel); //create click event on the last child node of the leftside div that calls nextLevel function
+            document.body.removeEventListener('click', gameOver);
+        }
+        
+    </script>
+</body>
+</html>
